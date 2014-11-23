@@ -9,4 +9,5 @@ iron:router
 particle4dev:sass
 accounts-facebook
 reactive-var
+lepozepo:streams
 

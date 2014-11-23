@@ -174,6 +174,13 @@ Game = {
 };
 
 Template.gameCanvas.rendered = function(){
+
+    var inputStream = new Meteor.Stream('inputs');
+    inputStream.on('move', function(move) {
+        console.log('got move', move);
+    });
+
+
     Game.init();
 
     this.autorun(_.bind(function(){
