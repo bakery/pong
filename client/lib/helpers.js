@@ -1,11 +1,11 @@
 Helpers = {
     absolutePositionToRelative : function(v){
-        var screenWidth = $(document.body).width();
-        return v/screenWidth;
+        var screenHeight = $(document.body).height();
+        return v/screenHeight;
     },
 
     relativePositionToAbsolute : function(v){
-        var screenWidth = $(document.body).width();
-        return Math.floor(v*screenWidth);
+        var screenHeight = $(document.body).height();
+        return Math.floor(v*screenHeight);
     }
 };

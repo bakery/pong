@@ -29,6 +29,7 @@ Game = {
     },
 
     addPlayer : function(player){
+        var SCREEN_WIDTH = $(document.body).width();
         var thePlayer = _.extend({}, player);
         var playerId = player._id;
 
@@ -36,7 +37,9 @@ Game = {
         if (this._players[playerId]) return;
 
         var x = 20;
-        if (_.keys(this._players).length==1)   x=780;
+        if (_.keys(this._players).length==1) {
+             x = SCREEN_WIDTH - 20;
+        }  
 
         var fixDef = new box2d.b2FixtureDef();
         var bodyDef = new box2d.b2BodyDef();
@@ -59,7 +62,10 @@ Game = {
         md.bodyA = this.world.GetGroundBody();
         md.bodyB = thePlayer.body;
         // md.target.Set(mouseX, mouseY);
-        md.target.Set(thePlayer.body.GetPosition().x, 800/2);
+        md.target.Set(
+            thePlayer.body.GetPosition().x,
+            SCREEN_WIDTH/this.SCALE/2
+        );
         md.collideConnected = true;
         md.maxForce = 300.0 * thePlayer.body.GetMass();
         mouseJoint = this.world.CreateJoint(md);
@@ -100,6 +106,10 @@ Game = {
     },
 
     setupPhysics : function(){
+
+        var SCREEN_WIDTH = $(document.body).width();
+        var SCREEN_HEIGHT = $(document.body).height();
+
         this.world = new box2d.b2World( new box2d.b2Vec2(0, 0), true); //   true is body sleep (we won't need that)
 
     //  create ground
@@ -111,21 +121,41 @@ Game = {
         fixDef.density = 0;
         fixDef.friction = 0;
         
-        fixDef.shape.SetAsBox(400/this.SCALE, 10/this.SCALE);
+        console.log('setup width',SCREEN_WIDTH);
+
+        fixDef.shape.SetAsBox(
+            SCREEN_WIDTH/this.SCALE/2,
+            10/this.SCALE
+        );
         //  bottom
-        bodyDef.position.Set(400/this.SCALE, 600/this.SCALE);
+        bodyDef.position.Set(
+            SCREEN_WIDTH/this.SCALE/2,
+            SCREEN_HEIGHT/this.SCALE
+        );
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
         //  top
-        bodyDef.position.Set(400/this.SCALE, 0/this.SCALE);
+        bodyDef.position.Set(
+            SCREEN_WIDTH/this.SCALE/2,
+            0/this.SCALE
+        );
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-        fixDef.shape.SetAsBox(10/this.SCALE, 600/this.SCALE);
+        fixDef.shape.SetAsBox(
+            10/this.SCALE,
+            SCREEN_HEIGHT/this.SCALE/2
+        );
         //  left
-        bodyDef.position.Set(0/this.SCALE, 600/this.SCALE);
+        bodyDef.position.Set(
+            0/this.SCALE, 
+            SCREEN_HEIGHT/this.SCALE/2
+        );
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         //  right
-        bodyDef.position.Set(800/this.SCALE, 600/this.SCALE);   
+        bodyDef.position.Set(
+            SCREEN_WIDTH/this.SCALE,
+            SCREEN_HEIGHT/this.SCALE/2
+        );
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         
@@ -133,7 +163,10 @@ Game = {
         bodyDef.type = box2d.b2Body.b2_dynamicBody;
         bodyDef.fixedRotation = false;
         fixDef.shape = new box2d.b2CircleShape(10/this.SCALE);
-        bodyDef.position.Set (800/2/this.SCALE, 600/2/this.SCALE);
+        bodyDef.position.Set(
+            SCREEN_WIDTH/this.SCALE/2,
+            SCREEN_HEIGHT/this.SCALE/2
+        );
         fixDef.restitution = 1.01;  //  speed up bounciness
         this._ball = {};
         this._ball.body = this.world.CreateBody(bodyDef);
@@ -156,11 +189,23 @@ Game = {
     _ball: null
 };
 
+Template.gameCanvas.helpers({
+    screenWidth : function(){
+        return $(document.body).width();
+    },
+    screenHeight : function(){
+        return $(document.body).height();
+    }
+});
+
 Template.gameCanvas.rendered = function(){
 
     var inputStream = new Meteor.Stream('inputs');
     inputStream.on('move', function(move) {
         console.log('got move', move);
+        Game.movePlayer(move.playerId,
+            Helpers.relativePositionToAbsolute(move.position)
+        );
     });
 
 

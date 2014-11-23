@@ -1,5 +1,6 @@
 <template name="gameTrace">
-	<strong>Game: {{game._id}}</strong><br>
+	<div style="position:absolute;left:0;top:0;">
+		<strong>Game: {{game._id}}</strong><br>
 	{{#each syncs}}
 		<strong>sync: {{_id}} // code {{code}}</strong>
 		{{#if activated}}
@@ -11,4 +12,5 @@
 	{{#each players}}
 		<strong>player {{_id}} @ {{position}}</strong><br>
 	{{/each}}
+	</div>
 </template>

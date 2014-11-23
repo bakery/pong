@@ -30,11 +30,11 @@ Template.controller.rendered = function(){
         //     }
         // });
         
-        position.set(touch.pageX);
+        position.set(touch.pageY);
 
         inputStream.emit('move', {
             playerId : player._id,
-            position: Helpers.absolutePositionToRelative(touch.pageX)
+            position: Helpers.absolutePositionToRelative(touch.pageY)
         });
 
         event.preventDefault();
@@ -62,14 +62,14 @@ Template.controller.rendered = function(){
             });
         }
 
-        var LEFT = 37;
-        var RIGHT = 39;
+        var UP = 38;
+        var DOWN = 40;
 
         switch(e.which){
-            case LEFT:
+            case UP:
                 move(-10);
                 break;
-            case RIGHT:
+            case DOWN:
                 move(10);
                 break;
         }
