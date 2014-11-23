@@ -29,6 +29,7 @@ Game = {
     },
 
     addPlayer : function(player){
+        var SCREEN_HEIGHT = $(document.body).height();
         var SCREEN_WIDTH = $(document.body).width();
         var thePlayer = _.extend({}, player);
         var playerId = player._id;
@@ -58,18 +59,18 @@ Game = {
         this._players[playerId] = thePlayer;
 
         // create da joint and smooke it
-        var md = new box2d.b2MouseJointDef();
-        md.bodyA = this.world.GetGroundBody();
-        md.bodyB = thePlayer.body;
-        // md.target.Set(mouseX, mouseY);
-        md.target.Set(
-            thePlayer.body.GetPosition().x,
-            SCREEN_WIDTH/this.SCALE/2
-        );
-        md.collideConnected = true;
-        md.maxForce = 300.0 * thePlayer.body.GetMass();
-        mouseJoint = this.world.CreateJoint(md);
-        thePlayer.body.SetAwake(true);
+        // var md = new box2d.b2MouseJointDef();
+        // md.bodyA = this.world.GetGroundBody();
+        // md.bodyB = thePlayer.body;
+        // // md.target.Set(mouseX, mouseY);
+        // md.target.Set(
+        //     thePlayer.body.GetPosition().x,
+        //     SCREEN_HEIGHT/this.SCALE/2
+        // );
+        // md.collideConnected = true;
+        // md.maxForce = 300.0 * thePlayer.body.GetMass();
+        // mouseJoint = this.world.CreateJoint(md);
+        // thePlayer.body.SetAwake(true);
 
         return playerId;
     },
@@ -98,11 +99,24 @@ Game = {
         //    }
         // }
 
+
         var thePlayer = this._players[playerId];
 
-        mouseJoint.SetTarget(
-            new box2d.b2Vec2(thePlayer.body.GetPosition().x,positionY)
-        );
+        var pForce = 10;
+        var yForce = (positionY - thePlayer.body.GetPosition().y) * pForce;
+
+        console.log(positionY + ' - ' + thePlayer.body.GetPosition().y);
+        console.log(yForce);
+        console.log(thePlayer.body.GetWorldCenter());
+
+        //  move the player
+        // var forceDir = new box2d.b2Vec2( (0,  (positionY - thePlayer.body.GetPosition().y) * 10) );
+        // thePlayer.body.SetTransform(
+        thePlayer.body.SetTransform( new box2d.b2Vec2(0, yForce), thePlayer.body.GetWorldCenter());
+
+        // mouseJoint.SetTarget(
+        //     new box2d.b2Vec2(thePlayer.body.GetPosition().x,positionY)
+        // );
     },
 
     setupPhysics : function(){
