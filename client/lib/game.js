@@ -106,13 +106,17 @@ Game = {
         var yForce = (positionY - thePlayer.body.GetPosition().y) * pForce;
 
         console.log(positionY + ' - ' + thePlayer.body.GetPosition().y);
-        console.log(yForce);
-        console.log(thePlayer.body.GetWorldCenter());
+
+        //  testing
+            var x = thePlayer.body.GetPosition().x;
+            var y = positionY/this.SCALE;
+            console.log('set: ', x, y);
 
         //  move the player
         // var forceDir = new box2d.b2Vec2( (0,  (positionY - thePlayer.body.GetPosition().y) * 10) );
         // thePlayer.body.SetTransform(
-        thePlayer.body.SetTransform( new box2d.b2Vec2(0, yForce), thePlayer.body.GetWorldCenter());
+        // thePlayer.body.SetTransform( new box2d.b2Vec2(0, yForce), thePlayer.body.GetWorldCenter());
+        thePlayer.body.SetPosition( new box2d.b2Vec2(x, y));
 
         // mouseJoint.SetTarget(
         //     new box2d.b2Vec2(thePlayer.body.GetPosition().x,positionY)
