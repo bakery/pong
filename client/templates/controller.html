@@ -1,0 +1,13 @@
+<template name="controller">
+	<strong>{{player._id}}</strong>
+	
+	{{#if notSynced}}
+		{{>sync}}
+	{{/if}}
+
+	{{#if game}}
+		<strong>Game: {{game._id}}</strong>
+	{{/if}}
+
+	<div class="controller" style="left:{{absolutePosition player.position}}px;"></div>
+</template>

@@ -1,0 +1,15 @@
+.controller {
+	$width:200px; $height:200px;
+
+	position: absolute;
+	left: 50%; top: 50%;
+	margin-top:-$height/2; 
+	margin-left:-$width/2;
+	width: $width; height: $height;
+	
+
+	border: solid 1px #ccc;
+	background-color: #ACE900;
+	border-radius: 50%;
+
+}

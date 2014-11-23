@@ -1,0 +1,18 @@
+$width : 100px;
+$height : 50px;
+
+.player {
+	position: absolute;
+	width: $width;
+	height: $height;
+	left: 50%; margin-left: -$width/2; 
+	border: solid 1px #ccc;
+}
+
+.players .player:nth-child(1){
+	top: $height/2;
+}
+
+.players .player:nth-child(2){
+	bottom: $height/2;
+}
