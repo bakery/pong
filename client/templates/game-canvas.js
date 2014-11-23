@@ -19,23 +19,35 @@ Game = {
         this.stage = new createjs.Stage(document.getElementById("canvas"));
         this.setupPhysics();
         
-        //window.setInterval(this.update, 1000 / 60);
+        window.setInterval(_.bind(this.update,this), 1000 / 60);
     },
 
-    addPlayerAt : function(player, x){
+    update : function(){
+        this.world.Step(1 / 60, 10, 10);
+        this.world.DrawDebugData();
+        this.world.ClearForces();
+    },
+
+    addPlayer : function(player){
+        var thePlayer = _.extend({}, player);
+        var playerId = player._id;
+
+        //  this player is already added
+        if (this._players[playerId]) return;
+
+        var x = 20;
+        if (_.keys(this._players).length==1)   x=780;
+
         var fixDef = new box2d.b2FixtureDef();
         var bodyDef = new box2d.b2BodyDef();
         
         fixDef.shape = new box2d.b2PolygonShape();
         fixDef.density = 50;
         fixDef.friction = 0;
-        bodyDef.type = box2d.b2Body.b2_staticBody;
+        bodyDef.type = box2d.b2Body.b2_dynamicBody;
         fixDef.shape.SetAsBox(10/this.SCALE, 40/this.SCALE);
         bodyDef.position.Set(x/this.SCALE, 120/this.SCALE);
         bodyDef.fixedRotation = true;
-
-        var thePlayer = _.extend({}, player);
-        var playerId = Tools.getRandomInt(1,10000).toString();
 
         thePlayer.body = this.world.CreateBody(bodyDef);
         thePlayer.body.CreateFixture(fixDef);
@@ -85,10 +97,6 @@ Game = {
         mouseJoint.SetTarget(
             new box2d.b2Vec2(thePlayer.body.GetPosition().x,positionY)
         );
-
-        this.world.Step(1 / 60, 10, 10);
-        this.world.DrawDebugData();
-        this.world.ClearForces();
     },
 
     setupPhysics : function(){
@@ -120,39 +128,18 @@ Game = {
         bodyDef.position.Set(800/this.SCALE, 600/this.SCALE);   
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-    
-     // create player
- //    fixDef.shape = new box2d.b2PolygonShape();
- //    bodyDef.type = box2d.b2Body.b2_dynamicBody;
- //    fixDef.shape.SetAsBox(10/SCALE, 40/SCALE);
- //    bodyDef.position.Set(20/SCALE, 120/SCALE);
-
- //    _player1 = {
- //       id : 1,
- //       name : 'Dino',
- //       score : 0,
- //       ready : false,
- //    };
-
-    // fixDef.density = 50;
-    // fixDef.friction = 0;
-    // bodyDef.fixedRotation = true;
-    // _player1.body = world.CreateBody(bodyDef);
-    // _player1.body.CreateFixture(fixDef);
-
-
-        // Restrict paddle along the x axis
-        var pd = new box2d.b2PrismaticJointDef();       
         
         // create the ball
+        bodyDef.type = box2d.b2Body.b2_dynamicBody;
         bodyDef.fixedRotation = false;
         fixDef.shape = new box2d.b2CircleShape(10/this.SCALE);
-        bodyDef.position.x = Math.random() * 10;
-        bodyDef.position.y = Math.random() * 10;
+        bodyDef.position.Set (800/2/this.SCALE, 600/2/this.SCALE);
         fixDef.restitution = 1.01;  //  speed up bounciness
         this._ball = {};
         this._ball.body = this.world.CreateBody(bodyDef);
         this._ball.body.CreateFixture(fixDef);
+
+        this._ball.body.ApplyForce( new box2d.b2Vec2((Math.random()*5+1)*100,(Math.random()*5+1)*100),  new box2d.b2Vec2(100, 100));
 
         //  setup debug draw
         var debugDraw = new box2d.b2DebugDraw();
@@ -160,10 +147,6 @@ Game = {
         debugDraw.SetDrawScale(this.SCALE);
         debugDraw.SetFlags(box2d.b2DebugDraw.e_shapeBit | box2d.b2DebugDraw.e_jointBit);
         this.world.SetDebugDraw(debugDraw);
-
-        this.world.Step(1 / 60, 10, 10);
-        this.world.DrawDebugData();
-        this.world.ClearForces();
     },
 
     SCALE : 30,
@@ -177,9 +160,9 @@ Template.gameCanvas.rendered = function(){
     Game.init();
 
     this.autorun(_.bind(function(){
-        console.log(this.data.players.fetch());
+        // console.log(this.data.players.fetch());
         _.each(this.data.players.fetch(), function(p){
-            Game.addPlayerAt(p, 50);
+            Game.addPlayer(p);
         });
     },this));
 
